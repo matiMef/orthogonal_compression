@@ -26,16 +26,17 @@ def split_to_bloks(cropped_image, block_size):
   splitted_image = np.transpose(splitted_image, (0, 2, 1, 3))
   return splitted_image
 
-def show_blocks_grid(splited_image):
+def show_blocks_grid(splitted_image):
+  plt.title("Obrazek po podziale na bloki")
   for i in range(15):
     for j in range(15):
       plt.subplot(15, 15, i*15 + j + 1)
-      plt.imshow(splited_image[i, j], cmap = 'gray')
+      plt.imshow(splitted_image[i, j], cmap = 'gray')
       plt.axis('off')
-  matplotlib.pyplot.imshow(splited_image[15, 0], cmap = 'gray')
-  matplotlib.pyplot.show()
-  print(type(splited_image))
-  print(np.shape(splited_image))
+  # plt.imshow(splitted_image[15, 0], cmap = 'gray')
+  # plt.show()
+  # print(type(splitted_image))
+  # print(np.shape(splitted_image))
 
 def calculate_img_dimensions(img):
   img_h = np.shape(img)[0]
@@ -101,7 +102,7 @@ def compress_scipy_dct_image(splitted_image):
       image_compressed[i, j] = image_block
   return image_compressed
 
-def splited_image_to_image(image_compressed, block_size):
+def splited_image_to_combined_image(image_compressed, block_size):
   h, w = calculate_img_dimensions(image_compressed)
   temp = image_compressed.transpose(0, 2, 1, 3)
   image_combined = np.reshape(temp, (h * block_size, w * block_size))
@@ -113,10 +114,10 @@ def show_decompression_efect(img, img_dct, img_scipy_dct):
   plt.title("Przed kompresją")
   plt.imshow(img, cmap='gray')
   plt.subplot(1, 3, 2)
-  plt.title("Po kompresji")
+  plt.title("Po kompresji DCT")
   plt.imshow(img_dct, cmap ='gray')
   plt.subplot(1, 3, 3)
-  plt.title("Po kompresji 2")
+  plt.title("Po kompresji Scipy DCT")
   plt.imshow(img_scipy_dct, cmap='gray')
   plt.show()
 
@@ -124,10 +125,11 @@ def main():
   gray_image = load_image(path)
   cropped_image = crop_image(gray_image, matrix_size)
   splitted_image = split_to_bloks(cropped_image, matrix_size)
+  show_blocks_grid(splitted_image)
   image_compressed_dct = compress_dct_image(splitted_image)
   image_compressed_scipy_dct = compress_scipy_dct_image(splitted_image)
-  dct_image = splited_image_to_image(image_compressed_dct, matrix_size)
-  scipy_dct_image = splited_image_to_image(image_compressed_scipy_dct, matrix_size)
+  dct_image = splited_image_to_combined_image(image_compressed_dct, matrix_size)
+  scipy_dct_image = splited_image_to_combined_image(image_compressed_scipy_dct, matrix_size)
   show_decompression_efect(gray_image, dct_image, scipy_dct_image)
 
 main()
