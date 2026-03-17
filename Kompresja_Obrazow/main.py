@@ -87,7 +87,6 @@ def scipy_dct(splitted_image):
  with np.printoptions(edgeitems = 8, precision = 2, linewidth = 1000):
   B = dct(dct(splitted_image.T, norm='ortho').T, norm='ortho')
   M, N = calculate_img_dimensions(splitted_image)
-  print(M, N)
   mask = calculate_compression_mask(M, N)
   B_compressed = B * mask
   A_compressed = idct(idct(B_compressed, norm='ortho').T, norm='ortho').T
