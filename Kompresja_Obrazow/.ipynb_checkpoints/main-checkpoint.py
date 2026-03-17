@@ -5,10 +5,7 @@ import numpy as np
 import skimage.color as color
 from scipy.fftpack import dct, idct
 
-# Tytuł Projektu
-
 matrix_size = 8
-
 path = "test_model.jpg"
 image = io.imread(path)
 image = color.rgb2gray(image)
