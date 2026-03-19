@@ -84,13 +84,16 @@ def compress_dct_image(splitted_image):
       image_compressed[i, j] = image_block
   return image_compressed
 
-def scipy_dct(splitted_image):
+def scipy_dct(splitted_image, img_h, img_w):
  with np.printoptions(edgeitems = 8, precision = 2, linewidth = 1000):
-  B = dct(dct(splitted_image.T, norm='ortho').T, norm='ortho')
+  B = dct(dct(splitted_image, axis=0, norm='ortho'), axis=1, norm='ortho')
+  with np.printoptions(edgeitems=8, precision=1, linewidth=1000):
+    if(img_h == 0 and img_w == 0):
+      print(B)
   M, N = calculate_img_dimensions(splitted_image)
   mask = calculate_compression_mask(M, N)
   B_compressed = B * mask
-  A_compressed = idct(idct(B_compressed, norm='ortho').T, norm='ortho').T
+  A_compressed = idct(idct(B_compressed, axis=0, norm='ortho'), axis=1, norm='ortho')
   return A_compressed
  
 def compress_scipy_dct_image(splitted_image):
@@ -98,7 +101,7 @@ def compress_scipy_dct_image(splitted_image):
   image_compressed = np.zeros_like(splitted_image)
   for i in range(img_h):
     for j in range(img_w):
-      image_block = scipy_dct(splitted_image[i,j])
+      image_block = scipy_dct(splitted_image[i,j], i, j)
       image_compressed[i, j] = image_block
   return image_compressed
 
