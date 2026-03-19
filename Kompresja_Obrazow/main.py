@@ -4,6 +4,7 @@ import skimage.io as io
 import numpy as np
 import skimage.color as color
 from scipy.fftpack import dct, idct
+import timeit
 
 matrix_size = 8
 path = "test_model.jpg"
@@ -38,6 +39,8 @@ def show_blocks_grid(splitted_image):
   # print(type(splitted_image))
   # print(np.shape(splitted_image))
 
+# === Funkcje pomocnicze ===
+
 def calculate_img_dimensions(img):
   img_h = np.shape(img)[0]
   img_w = np.shape(img)[1]
@@ -50,6 +53,42 @@ def calculate_compression_mask(M, N):
     for j in range(mask_size - i):
       mask[i, j] = 1
   return mask
+
+def start_time_measure():
+    start = timeit.default_timer()
+    return start
+
+def end_time_measure(start):
+    end = timeit.default_timer()
+    time_elapsed = end - start
+    time_elapsed = (float(f'{time_elapsed:.4f}'))
+    return time_elapsed
+
+# === Wizualizacje ===
+
+def total_time_chart(times):
+    width = 0.25  
+    multiplier = 0
+
+    type = ("Total time", "Mean time")
+    time_means = {
+    'DCT': (np.sum(times[0]), (np.sum(times[0])/len(times[0]))),
+    'Scipy-DCT': (np.sum(times[1]), (np.sum(times[1])/len(times[1])))
+    }
+    x = np.arange(len(type))  
+    fig, ax = plt.subplots(layout='constrained')
+
+    for attribute, measurement in time_means.items():
+        offset = width * multiplier
+        rects = ax.bar(x + offset, measurement, width, label=attribute)
+        ax.bar_label(rects, padding=3)
+        multiplier += 1
+
+    ax.set_ylabel('Execution time(s)')
+    ax.set_title('Total and mean time of algorithms')
+    ax.set_xticks(x + width, type)
+    ax.legend(loc='upper right', ncols=3)
+    plt.show()
 
 def dct_compression(splited_image, img_h, img_w):
   img_block = splited_image[img_h, img_w]
@@ -129,8 +168,20 @@ def main():
   cropped_image = crop_image(gray_image, matrix_size)
   splitted_image = split_to_bloks(cropped_image, matrix_size)
   show_blocks_grid(splitted_image)
+  
+  times = np.zeros((2,1))
+  start = start_time_measure()
   image_compressed_dct = combine_dct_image(splitted_image)
+  time = end_time_measure(start)
+  times[0]=time
+  
+  start = start_time_measure()
   image_compressed_scipy_dct = combine_scipy_dct_image(splitted_image)
+  time = end_time_measure(start)
+  times[1]=time
+  
+  total_time_chart(times)
+
   dct_image = reshape_combined_image(image_compressed_dct, matrix_size)
   scipy_dct_image = reshape_combined_image(image_compressed_scipy_dct, matrix_size)
   show_decompression_efect(gray_image, dct_image, scipy_dct_image)
