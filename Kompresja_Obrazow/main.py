@@ -67,27 +67,36 @@ def end_time_measure(start):
 # === Wizualizacje ===
 
 def total_time_chart(times):
-    width = 0.25  
-    multiplier = 0
-
-    type = ("Total time", "Mean time")
+    width = 0.2 
+    
+    type_label = ['Total time']
     time_means = {
-    'DCT': (np.sum(times[0]), (np.sum(times[0])/len(times[0]))),
-    'Scipy-DCT': (np.sum(times[1]), (np.sum(times[1])/len(times[1])))
+        'DCT': np.sum(times[0]),
+        'Scipy-DCT': np.sum(times[1])
     }
-    x = np.arange(len(type))  
-    fig, ax = plt.subplots(layout='constrained')
+    
+    x = np.arange(len(type_label))  
+    fig, ax = plt.subplots(figsize=(6, 5)) 
 
-    for attribute, measurement in time_means.items():
-        offset = width * multiplier
-        rects = ax.bar(x + offset, measurement, width, label=attribute)
-        ax.bar_label(rects, padding=3)
-        multiplier += 1
+    num_items = len(time_means)
+    total_group_width = num_items * width
+    start_pos = x - (total_group_width / 2) + (width / 2)
 
-    ax.set_ylabel('Execution time(s)')
-    ax.set_title('Total and mean time of algorithms')
-    ax.set_xticks(x + width, type)
-    ax.legend(loc='upper right', ncols=3)
+    for i, (attribute, measurement) in enumerate(time_means.items()):
+        pos = start_pos + (i * width)
+        rects = ax.bar(pos, measurement, width, label=attribute)
+        ax.bar_label(rects, padding=3, fmt='%.4f') 
+
+    ax.set_ylabel('Execution time (s)')
+    ax.set_title('Total execution time comparison')
+    
+    ax.set_xticks(x)
+    ax.set_xticklabels(type_label)
+
+    ax.set_xlim(x[0] - 0.5, x[0] + 0.5) 
+    
+    ax.legend(loc='upper right')
+    plt.tight_layout()
     plt.show()
 
 def dct_compression(splited_image, img_h, img_w):
