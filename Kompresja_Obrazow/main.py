@@ -241,13 +241,6 @@ def scipy_dct(split_image, img_h, img_w):
   A_compressed = idct(idct(B_compressed, axis=0, norm='ortho'), axis=1, norm='ortho')
   return A_compressed
 
-def numpy_fft(gray_image, M):
-  Transformation = np.fft.fft2(gray_image)
-  mask = np.abs(Transformation) >= M
-  Transformation_compressed = Transformation * mask
-  fft_image = np.real(np.fft.ifft2(Transformation_compressed))
-  return fft_image
- 
 def combine_scipy_dct_image(split_image):
   img_h, img_w = calculate_img_dimensions(split_image)
   image_combined = np.zeros_like(split_image)
@@ -262,6 +255,13 @@ def reshape_combined_image(image_combined, block_size):
   temp = image_combined.transpose(0, 2, 1, 3)
   image_combined = np.reshape(temp, (h * block_size, w * block_size))
   return image_combined
+
+def numpy_fft(gray_image, M):
+  Transformation = np.fft.fft2(gray_image)
+  mask = np.abs(Transformation) >= M
+  Transformation_compressed = Transformation * mask
+  fft_image = np.real(np.fft.ifft2(Transformation_compressed))
+  return fft_image
 
 def dct_compress_image(split_image, img_h, img_w):
   img_block = split_image[img_h, img_w]
