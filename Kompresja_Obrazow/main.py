@@ -206,6 +206,7 @@ def main():
   noise = noise_calculate(gray_image, dct_image)
   errors_dct, errors_dft = caculate_aproximation_error(gray_image)
   FC = dct_coefficients(gray_image)
-  show_decompression_efect(gray_image, dct_image, scipy_dct_image, img_cosinus_compressed, snr, noise, FC, errors_dct, errors_dft )
+  fft = fft_compression(gray_image, 120)
+  show_decompression_efect(gray_image, fft, scipy_dct_image, img_cosinus_compressed, snr, noise, FC, errors_dct, errors_dft )
 
 main()
