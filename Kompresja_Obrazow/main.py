@@ -172,8 +172,8 @@ def show_SNR(cropped_image, dct_image, scipy_dct_image, fft_image):
   plt.imshow(fft_image, cmap='gray')
   plt.show()
 
-def show_correlation(gray_image):
-  errors_dct, errors_fft = caculate_aproximation_error(gray_image)
+def show_correlation(cropped_image):
+  errors_dct, errors_fft = caculate_aproximation_error(cropped_image)
   
   plt.title("Błąd aproksymacji")
   plt.plot(np.log10(errors_dct), color='red', label='DCT')
@@ -183,9 +183,9 @@ def show_correlation(gray_image):
   plt.ylabel("log10(błąd)")
   plt.show()
 
-def show_coeffcients(gray_image):
-  FC = calculate_dct_coefficients(gray_image)
-  FF = calculate_fft_coefficients(gray_image)
+def show_coeffcients(cropped_image):
+  FC = calculate_dct_coefficients(cropped_image)
+  FF = calculate_fft_coefficients(cropped_image)
   
   plt.figure(figsize=(12, 6))
   plt.subplot(1, 2, 1)
@@ -382,9 +382,9 @@ def main():
   show_decompression_efect(gray_image, dct_image, scipy_dct_image)
 
   show_SNR(cropped_image, dct_image, scipy_dct_image, fft_image)
-  show_correlation(gray_image)
-  show_coeffcients(gray_image)
+  show_correlation(cropped_image)
+  show_coeffcients(cropped_image)
 
-  compress_image_to_file(split_image)
+  compress_image_to_file(cropped_image)
 
 main()
