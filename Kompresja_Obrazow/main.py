@@ -7,7 +7,7 @@ import skimage.color as color
 from scipy.fftpack import dct, idct
 
 matrix_size = 8
-path = "test_model.jpg"
+path = "test_model2.jpg"
 
 def load_image(path):
   raw_image = io.imread(path)
@@ -71,9 +71,9 @@ def end_time_measure(start):
 # === Wizualizacje ===
 
 # Logika
-def calculate_snr(gray_image, combined_image):
-  og = np.sum(gray_image ** 2)
-  dif = np.sum((gray_image - combined_image) ** 2 )
+def calculate_snr(cropped_image, combined_image):
+  og = np.sum(cropped_image ** 2)
+  dif = np.sum((cropped_image - combined_image) ** 2 )
   SNR = 10 * np.log10 (og/dif)
   return SNR
 
@@ -156,11 +156,11 @@ def show_decompression_efect(gray_image, dct_image, scipy_dct_image):
   plt.imshow(scipy_dct_image, cmap='gray')
   plt.show()
 
-def show_SNR(gray_image, dct_image, scipy_dct_image, fft_image):
+def show_SNR(cropped_image, dct_image, scipy_dct_image, fft_image):
   plt.figure(figsize=(12, 6))
-  SNR_dct = calculate_snr(gray_image, dct_image)
-  SNR_scipy_dct = calculate_snr(gray_image, scipy_dct_image)
-  SNR_numpy_fft = calculate_snr(gray_image, fft_image)
+  SNR_dct = calculate_snr(cropped_image, dct_image)
+  SNR_scipy_dct = calculate_snr(cropped_image, scipy_dct_image)
+  SNR_numpy_fft = calculate_snr(cropped_image, fft_image)
   plt.subplot(1, 3, 1)
   plt.title(f"DCT\nSNR = {SNR_dct:.2f} dB")
   plt.imshow(dct_image, cmap='gray')
@@ -256,8 +256,8 @@ def reshape_combined_image(image_combined, block_size):
   image_combined = np.reshape(temp, (h * block_size, w * block_size))
   return image_combined
 
-def numpy_fft(gray_image, M):
-  Transformation = np.fft.fft2(gray_image)
+def numpy_fft(cropped_image, M):
+  Transformation = np.fft.fft2(cropped_image)
   mask = np.abs(Transformation) >= M
   Transformation_compressed = Transformation * mask
   fft_image = np.real(np.fft.ifft2(Transformation_compressed))
@@ -371,7 +371,7 @@ def main():
   times[1] = time
   
   start = start_time_measure()
-  fft_image = numpy_fft(gray_image, 50)
+  fft_image = numpy_fft(cropped_image, 50)
   time = end_time_measure(start)
   times[2] = time
 
@@ -381,7 +381,7 @@ def main():
   scipy_dct_image = reshape_combined_image(image_compressed_scipy_dct, matrix_size)
   show_decompression_efect(gray_image, dct_image, scipy_dct_image)
 
-  show_SNR(gray_image, dct_image, scipy_dct_image, fft_image)
+  show_SNR(cropped_image, dct_image, scipy_dct_image, fft_image)
   show_correlation(gray_image)
   show_coeffcients(gray_image)
 
