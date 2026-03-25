@@ -182,7 +182,6 @@ def show_correlation(cropped_image):
   plt.title("Błąd aproksymacji")
   plt.plot(np.log10(errors_dct), color='red', label='DCT')
   plt.plot(np.log10(errors_fft), color='blue', label='Fourier')
-  plt.title("log10(epsilon[M]^2)")
   plt.xlabel("M - liczba zachowanych współczynników")
   plt.ylabel("log10(błąd)")
   plt.show()
