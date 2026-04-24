@@ -4,7 +4,7 @@ from utils import time_measure, image, visualizations
 from algorithms import dct, dct_format, fft, sft
 
 dct_block_size = 64
-path = "test_models/test_model4.jpg"
+path = "test_models/test_model2.jpg"
 
 def main():
     gray_image = image.load_image(path)
@@ -21,6 +21,7 @@ def main():
     visualizations.show_blocks_grid(split_image)
     visualizations.show_decompression_efect(cropped_image, dct_image, fft_image, sft_image)
     visualizations.show_snr(cropped_image, dct_image, scipy_dct_image, fft_image, sft_image)
+    visualizations.show_metrics_comparison(cropped_image, dct_image, scipy_dct_image, fft_image, sft_image)
     visualizations.show_phase_comparison(cropped_image, 50)
     visualizations.show_correlation(cropped_image)
     visualizations.show_coeffcients(cropped_image)
