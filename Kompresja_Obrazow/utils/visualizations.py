@@ -186,6 +186,10 @@ def show_coeffcients(cropped_image):
   plt.imshow(np.log(1e-5 + np.abs(FF)), cmap='gray')
   plt.show()
 
+
+
+
+
 def show_benchmark_chart(benchmark_results):
   if not benchmark_results:
       print("Brak danych do wyświetlenia.")
