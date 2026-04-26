@@ -57,12 +57,14 @@ def calculate_psnr(original, reconstructed):
     mse = np.mean((original.astype(float) - reconstructed.astype(float)) ** 2)
     if mse == 0:
         return float('inf')
-    return 10 * np.log10(255 ** 2 / mse)
+    max_val = 1.0 if original.max() <= 1.0 else 255.0
+    return 10 * np.log10(max_val ** 2 / mse)
 
 def calculate_ssim(original, reconstructed):
-    o = np.clip(original, 0, 255).astype(np.float64)
-    r = np.clip(reconstructed, 0, 255).astype(np.float64)
-    return ssim_metric(o, r, data_range=255.0)
+    data_range = 1.0 if original.max() <= 1.0 else 255.0
+    o = np.clip(original, 0, data_range).astype(np.float64)
+    r = np.clip(reconstructed, 0, data_range).astype(np.float64)
+    return ssim_metric(o, r, data_range=data_range)
 
 def calculate_mse(original, reconstructed):
     return np.mean((original.astype(float) - reconstructed.astype(float)) ** 2)
@@ -279,14 +281,13 @@ def show_metrics_comparison(cropped_image, dct_image, scipy_dct_image, fft_image
     _bar(axes[0, 1], psnr_vals, "PSNR (Peak SNR)",                        "dB",  highlight_max=True)
     _bar(axes[1, 0], ssim_vals, "SSIM (Structural Similarity Index)",     "",    highlight_max=True)
 
-    # MSE — skala log, bo wartości mogą się bardzo różnić
     bars = axes[1, 1].bar(algorithms, mse_vals, color=colors, edgecolor='white', linewidth=0.5)
     best_mse = np.argmin(mse_vals)
     bars[best_mse].set_edgecolor('black')
     bars[best_mse].set_linewidth(2)
     for bar, v in zip(bars, mse_vals):
         axes[1, 1].text(bar.get_x() + bar.get_width() / 2, v * 1.05,
-                        f'{v:.1f}', ha='center', va='bottom', fontsize=9)
+                        f'{v:.2e}', ha='center', va='bottom', fontsize=9)
     axes[1, 1].set_title("MSE (Mean Squared Error)", fontweight='bold')
     axes[1, 1].set_ylabel("Błąd kwadratowy (↓ lepiej)")
     axes[1, 1].set_yscale('log')
@@ -309,9 +310,9 @@ def show_phase_comparison(cropped_image, threshold=50, sft_keep_fraction=0.01):
 
     fc_row     = FC[0, :]
     fc_x       = np.linspace(-0.5, 0.5, len(fc_row))
-    phase_dct  = np.angle(fc_row.astype(complex))   # 0 lub ±π
+    phase_dct  = np.angle(fc_row.astype(complex))   
     fc_abs     = np.abs(fc_row)
-    dct_thresh = np.percentile(fc_abs, 75)           # zachowaj top 25%
+    dct_thresh = np.percentile(fc_abs, 75)           
     mask_dct   = fc_abs >= dct_thresh
     kept_dct   = 100 * np.sum(mask_dct) / mask_dct.size
 
